@@ -3,71 +3,49 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 public class playercontroller : MonoBehaviour
 {
-    public float speed = 0; 
-    public TextMeshProUGUI countText;
-    public GameObject winTextObject;
+    // Rigidbody of the player.
+    private Rigidbody rb;
 
-    private Rigidbody rb; 
-    private int count;
+    // Movement along X and Y axes.
     private float movementX;
     private float movementY;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    // Speed at which the player moves.
+    public float speed = 0;
+
+    // Camera follow fields
+    public Transform cameraTransform;     // Drag Main Camera here
+    public Vector3 cameraOffset = new Vector3(0, 10, -10);
+    public float cameraSmooth = 0.125f;
+
     void Start()
     {
-        rb = GetComponent <Rigidbody>(); 
-        count = 0;
-        SetCountText();
-        winTextObject.SetActive(false);
+        rb = GetComponent<Rigidbody>();
     }
-
 
     void OnMove(InputValue movementValue)
     {
         Vector2 movementVector = movementValue.Get<Vector2>();
-        movementX = movementVector.x; 
-        movementY = movementVector.y; 
+        movementX = movementVector.x;
+        movementY = movementVector.y;
     }
 
-            void SetCountText()
+    void FixedUpdate()
     {
-        countText.text =  "Count: " + count.ToString();
-
-        if(count >= 10)
-        {
-            winTextObject.SetActive(true);
-            Destroy(GameObject.FindGameObjectWithTag("Enemy"));
-        }
+        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
+        rb.AddForce(movement * speed);
     }
 
-
-    void FixedUpdate() 
-   {
-    Vector3 movement = new Vector3 (movementX, 0.0f, movementY);
-    rb.AddForce(movement * speed);
-   }
-
-   private void OnCollisionEnter(Collision collision)
-{
-   if (collision.gameObject.CompareTag("Enemy"))
-   {
-       Destroy(gameObject);
-       winTextObject.gameObject.SetActive(true);
-       winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
-   }
-}
-
-   private void OnTriggerEnter(Collider other)
+    void LateUpdate()
     {
-        if (other.gameObject.CompareTag("Pick up"))
-        {
-            other.gameObject.SetActive(false);
-            count = count + 1;
-            SetCountText();
-        }
-       
+        // Smooth camera follow
+        Vector3 desiredPos = transform.position + cameraOffset;
+        Vector3 smoothedPos = Vector3.Lerp(cameraTransform.position, desiredPos, cameraSmooth);
+
+        cameraTransform.position = smoothedPos;
+        cameraTransform.LookAt(transform);
     }
 }
