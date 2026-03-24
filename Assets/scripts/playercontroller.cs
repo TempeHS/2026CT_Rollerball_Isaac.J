@@ -35,7 +35,18 @@ public class playercontroller : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
+        // Get camera's forward and right directions (flattened to ground plane)
+        Vector3 cameraForward = cameraTransform.forward;
+        cameraForward.y = 0;
+        cameraForward.Normalize();
+        
+        Vector3 cameraRight = cameraTransform.right;
+        cameraRight.y = 0;
+        cameraRight.Normalize();
+        
+        // Calculate movement relative to camera direction
+        Vector3 movement = (cameraForward * movementY + cameraRight * movementX);
+        
         rb.AddForce(movement * speed);
     }
 
