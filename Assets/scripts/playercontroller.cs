@@ -4,48 +4,43 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class playercontroller : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    // Rigidbody of the player.
-    private Rigidbody rb;
+ // Rigidbody of the player.
+ private Rigidbody rb; 
 
-    // Movement along X and Y axes.
-    private float movementX;
-    private float movementY;
+ // Movement along X and Y axes.
+ private float movementX;
+ private float movementY;
 
-    // Speed at which the player moves.
-    public float speed = 0;
+ // Speed at which the player moves.
+ public float speed = 0; 
 
-    // Camera follow fields
-    public Transform cameraTransform;     // Drag Main Camera here
-    public Vector3 cameraOffset = new Vector3(0, 10, -10);
-    public float cameraSmooth = 0.125f;
-
-    void Start()
+ // Start is called before the first frame update.
+ void Start()
     {
+ // Get and store the Rigidbody component attached to the player.
         rb = GetComponent<Rigidbody>();
     }
-
-    void OnMove(InputValue movementValue)
+ 
+ // This function is called when a move input is detected.
+ void OnMove(InputValue movementValue)
     {
+ // Convert the input value into a Vector2 for movement.
         Vector2 movementVector = movementValue.Get<Vector2>();
-        movementX = movementVector.x;
-        movementY = movementVector.y;
+
+ // Store the X and Y components of the movement.
+        movementX = movementVector.x; 
+        movementY = movementVector.y; 
     }
 
-    void FixedUpdate()
+ // FixedUpdate is called once per fixed frame-rate frame.
+ void FixedUpdate() 
     {
-        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
-        rb.AddForce(movement * speed);
-    }
+ // Create a 3D movement vector using the X and Y inputs.
+        Vector3 movement = new Vector3 (movementX, 0.0f, movementY);
 
-    void LateUpdate()
-    {
-        // Smooth camera follow
-        Vector3 desiredPos = transform.position + cameraOffset;
-        Vector3 smoothedPos = Vector3.Lerp(cameraTransform.position, desiredPos, cameraSmooth);
-
-        cameraTransform.position = smoothedPos;
-        cameraTransform.LookAt(transform);
+ // Apply force to the Rigidbody to move the player.
+        rb.AddForce(movement * speed); 
     }
 }
