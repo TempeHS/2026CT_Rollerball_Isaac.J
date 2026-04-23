@@ -34,11 +34,10 @@ public class PlayerController : MonoBehaviour
         movementY = movementVector.y; 
     }
 
- // FixedUpdate is called once per fixed frame-rate frame.
- void FixedUpdate() 
-    {
+void FixedUpdate()
+{
+    Vector3 movement = new Vector3(movementX, 0f, movementY);
+    rb.AddForce(movement * speed);
+}
 
- // Apply force to the Rigidbody to move the player.
-        rb.AddForce(movement * speed); 
-    }
 }
